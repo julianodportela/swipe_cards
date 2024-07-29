@@ -23,21 +23,22 @@ class DraggableCard extends StatefulWidget {
   final EdgeInsets padding;
   final bool isBackCard;
 
-  DraggableCard(
-      {this.card,
-      this.likeTag,
-      this.nopeTag,
-      this.superLikeTag,
-      this.isDraggable = true,
-      this.onSlideUpdate,
-      this.onSlideOutComplete,
-      this.slideTo,
-      this.onSlideRegionUpdate,
-      this.upSwipeAllowed = false,
-      this.leftSwipeAllowed = true,
-      this.rightSwipeAllowed = true,
-      this.isBackCard = false,
-      this.padding = EdgeInsets.zero});
+  DraggableCard({
+    this.card,
+    this.likeTag,
+    this.nopeTag,
+    this.superLikeTag,
+    this.isDraggable = true,
+    this.onSlideUpdate,
+    this.onSlideOutComplete,
+    this.slideTo,
+    this.onSlideRegionUpdate,
+    this.upSwipeAllowed = false,
+    this.leftSwipeAllowed = true,
+    this.rightSwipeAllowed = true,
+    this.isBackCard = false,
+    this.padding = EdgeInsets.zero,
+  });
 
   @override
   _DraggableCardState createState() => _DraggableCardState();
@@ -70,20 +71,20 @@ class _DraggableCardState extends State<DraggableCard>
       vsync: this,
     )
       ..addListener(() => setState(() {
-            cardOffset = Offset.lerp(
-              slideBackStart,
-              const Offset(0.0, 0.0),
-              Curves.elasticOut.transform(slideBackAnimation.value),
-            );
+        cardOffset = Offset.lerp(
+          slideBackStart,
+          const Offset(0.0, 0.0),
+          Curves.elasticOut.transform(slideBackAnimation.value),
+        );
 
-            if (null != widget.onSlideUpdate) {
-              widget.onSlideUpdate!(cardOffset!.distance);
-            }
+        if (null != widget.onSlideUpdate) {
+          widget.onSlideUpdate!(cardOffset!.distance);
+        }
 
-            if (null != widget.onSlideRegionUpdate) {
-              widget.onSlideRegionUpdate!(slideRegion);
-            }
-          }))
+        if (null != widget.onSlideRegionUpdate) {
+          widget.onSlideRegionUpdate!(slideRegion);
+        }
+      }))
       ..addStatusListener((AnimationStatus status) {
         if (status == AnimationStatus.completed) {
           setState(() {
@@ -289,7 +290,7 @@ class _DraggableCardState extends State<DraggableCard>
   double _rotation(Rect? dragBounds) {
     if (dragStart != null) {
       final rotationCornerMultiplier =
-          dragStart!.dy >= dragBounds!.top + (dragBounds.height / 2) ? -1 : 1;
+      dragStart!.dy >= dragBounds!.top + (dragBounds.height / 2) ? -1 : 1;
       return (pi / 8) *
           (cardOffset!.dx / dragBounds.width) *
           rotationCornerMultiplier;
@@ -335,36 +336,36 @@ class _DraggableCardState extends State<DraggableCard>
           onPanEnd: _onPanEnd,
           child: widget.card != null
               ? Stack(
-                  children: [
-                    widget.card!,
-                    if (widget.likeTag != null &&
-                        slideRegion == SlideRegion.inLikeRegion)
-                      Positioned(
-                        top: 40,
-                        left: 20,
-                        child: Transform.rotate(
-                          angle: 12,
-                          child: widget.likeTag,
-                        ),
-                      ),
-                    if (widget.nopeTag != null &&
-                        slideRegion == SlideRegion.inNopeRegion)
-                      Positioned(
-                        top: 40,
-                        right: 20,
-                        child: Transform.rotate(
-                          angle: -12,
-                          child: widget.nopeTag,
-                        ),
-                      ),
-                    if (widget.superLikeTag != null &&
-                        slideRegion == SlideRegion.inSuperLikeRegion)
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: widget.superLikeTag,
-                      ),
-                  ],
-                )
+            children: [
+              widget.card!,
+              if (widget.likeTag != null &&
+                  slideRegion == SlideRegion.inLikeRegion)
+                Positioned(
+                  top: 40,
+                  left: 20,
+                  child: Transform.rotate(
+                    angle: 12,
+                    child: widget.likeTag,
+                  ),
+                ),
+              if (widget.nopeTag != null &&
+                  slideRegion == SlideRegion.inNopeRegion)
+                Positioned(
+                  top: 40,
+                  right: 20,
+                  child: Transform.rotate(
+                    angle: -12,
+                    child: widget.nopeTag,
+                  ),
+                ),
+              if (widget.superLikeTag != null &&
+                  slideRegion == SlideRegion.inSuperLikeRegion)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: widget.superLikeTag,
+                ),
+            ],
+          )
               : Container(),
         ),
       ),

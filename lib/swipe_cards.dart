@@ -49,7 +49,7 @@ class _SwipeCardsState extends State<SwipeCards> {
     }
     int? currentItemIndex = widget.matchEngine._currentItemIndex;
     _frontCard = Key(currentItemIndex.toString());
-      super.initState();
+    super.initState();
   }
 
   @override
@@ -97,6 +97,9 @@ class _SwipeCardsState extends State<SwipeCards> {
   }
 
   Widget _buildFrontCard() {
+    if (widget.matchEngine._currentItemIndex >= widget.matchEngine._swipeItems!.length) {
+      return Container(); // Return an empty container when index is out of bounds
+    }
     return ProfileCard(
       child: widget.itemBuilder(context, widget.matchEngine._currentItemIndex),
       key: _frontCard,
@@ -104,6 +107,9 @@ class _SwipeCardsState extends State<SwipeCards> {
   }
 
   Widget _buildBackCard() {
+    if (widget.matchEngine._nextItemIndex >= widget.matchEngine._swipeItems!.length) {
+      return Container(); // Return an empty container when index is out of bounds
+    }
     return Transform(
       transform: Matrix4.identity()..scale(_nextCardScale, _nextCardScale),
       alignment: Alignment.center,
@@ -250,6 +256,8 @@ class MatchEngine extends ChangeNotifier {
   }
 }
 
+enum Decision { undecided, nope, like, superLike }
+
 class SwipeItem extends ChangeNotifier {
   final dynamic content;
   final Function? likeAction;
@@ -310,5 +318,3 @@ class SwipeItem extends ChangeNotifier {
     }
   }
 }
-
-enum Decision { undecided, nope, like, superLike }
