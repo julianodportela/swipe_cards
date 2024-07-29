@@ -1,6 +1,3 @@
-library swipe_cards;
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/profile_card.dart';
@@ -51,10 +48,8 @@ class _SwipeCardsState extends State<SwipeCards> {
       _currentItem!.addListener(_onMatchChange);
     }
     int? currentItemIndex = widget.matchEngine._currentItemIndex;
-    if (currentItemIndex != null) {
-      _frontCard = Key(currentItemIndex.toString());
-    }
-    super.initState();
+    _frontCard = Key(currentItemIndex.toString());
+      super.initState();
   }
 
   @override
@@ -103,7 +98,7 @@ class _SwipeCardsState extends State<SwipeCards> {
 
   Widget _buildFrontCard() {
     return ProfileCard(
-      child: widget.itemBuilder(context, widget.matchEngine._currentItemIndex!),
+      child: widget.itemBuilder(context, widget.matchEngine._currentItemIndex),
       key: _frontCard,
     );
   }
@@ -113,7 +108,7 @@ class _SwipeCardsState extends State<SwipeCards> {
       transform: Matrix4.identity()..scale(_nextCardScale, _nextCardScale),
       alignment: Alignment.center,
       child: ProfileCard(
-        child: widget.itemBuilder(context, widget.matchEngine._nextItemIndex!),
+        child: widget.itemBuilder(context, widget.matchEngine._nextItemIndex),
       ),
     );
   }
@@ -150,10 +145,10 @@ class _SwipeCardsState extends State<SwipeCards> {
         break;
     }
 
-    if (widget.matchEngine._nextItemIndex! <
+    if (widget.matchEngine._nextItemIndex <
         widget.matchEngine._swipeItems!.length) {
       widget.itemChanged?.call(
-          widget.matchEngine.nextItem!, widget.matchEngine._nextItemIndex!);
+          widget.matchEngine.nextItem!, widget.matchEngine._nextItemIndex);
     }
 
     widget.matchEngine.cycleMatch();
@@ -211,44 +206,47 @@ class _SwipeCardsState extends State<SwipeCards> {
 
 class MatchEngine extends ChangeNotifier {
   final List<SwipeItem>? _swipeItems;
-  int? _currentItemIndex;
-  int? _nextItemIndex;
+  int _currentItemIndex;
+  int _nextItemIndex;
 
   MatchEngine({
     List<SwipeItem>? swipeItems,
-  }) : _swipeItems = swipeItems {
-    _currentItemIndex = 0;
-    _nextItemIndex = 1;
-  }
+  })  : _swipeItems = swipeItems,
+        _currentItemIndex = 0,
+        _nextItemIndex = 1;
 
-  SwipeItem? get currentItem => _currentItemIndex! < _swipeItems!.length
-      ? _swipeItems![_currentItemIndex!]
-      : null;
+  SwipeItem? get currentItem =>
+      _currentItemIndex < _swipeItems!.length ? _swipeItems![_currentItemIndex] : null;
 
-  SwipeItem? get nextItem => _nextItemIndex! < _swipeItems!.length
-      ? _swipeItems![_nextItemIndex!]
-      : null;
+  SwipeItem? get nextItem =>
+      _nextItemIndex < _swipeItems!.length ? _swipeItems![_nextItemIndex] : null;
 
   void cycleMatch() {
-    if (currentItem!.decision != Decision.undecided) {
+    if (currentItem != null && currentItem!.decision != Decision.undecided) {
       currentItem!.resetMatch();
       _currentItemIndex = _nextItemIndex;
-      _nextItemIndex = _nextItemIndex! + 1;
+      _nextItemIndex = _nextItemIndex + 1;
       notifyListeners();
     }
   }
 
   void rewindMatch() {
-    if (_currentItemIndex! > 0) {
-      currentItem!.resetMatch();
+    if (_currentItemIndex > 0) {
+      currentItem?.resetMatch();
       _nextItemIndex = _currentItemIndex;
-      _currentItemIndex = (_currentItemIndex! - 1);
+      _currentItemIndex = _currentItemIndex - 1;
+      currentItem?.resetMatch();
       notifyListeners();
     } else {
       _currentItemIndex = 0;
       _nextItemIndex = 1;
       notifyListeners();
     }
+  }
+
+  void addSwipeItem(SwipeItem item) {
+    _swipeItems?.insert(_currentItemIndex, item);
+    notifyListeners();
   }
 }
 
