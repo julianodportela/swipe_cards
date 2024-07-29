@@ -239,11 +239,14 @@ class MatchEngine extends ChangeNotifier {
   }
 
   void rewindMatch() {
-    if (_currentItemIndex != 0) {
+    if (_currentItemIndex! > 0) {
       currentItem!.resetMatch();
       _nextItemIndex = _currentItemIndex;
-      _currentItemIndex = _currentItemIndex! - 1;
-      currentItem!.resetMatch();
+      _currentItemIndex = (_currentItemIndex! - 1);
+      notifyListeners();
+    } else {
+      _currentItemIndex = 0;
+      _nextItemIndex = 1;
       notifyListeners();
     }
   }
